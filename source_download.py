@@ -58,6 +58,7 @@ for i in fList:
                    if isFile:
                             checksum = hash_lib.sha256sum(path)
                             graph.add_edge(hash_cmd, checksum, path) # add edge connecting 'apt-get build-dep' command to output file
+    os.chdir('../../')
 
     # create /buildtrace/{packageName}/graph folder
     working_dir = './temp/' + i + '/'
@@ -72,4 +73,3 @@ for i in fList:
                         graph_file.write(node.get_id() + ' : ' + edge.get_id() + '\n')
         break
 
-os.chdir('../../')

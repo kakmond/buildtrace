@@ -45,16 +45,14 @@ for dep in deps:
                if isFile:
                         checksum = hash_lib.sha256sum(path)
                         graph.add_edge(hash_cmd, checksum, path) # add edge connecting 'apt-get build-dep' command to output file
+os.chdir('../../')
 
 # create /buildtrace/{packageName}/graph folder
-working_dir = './temp/' + pkgName + '/'
-for x in os.listdir(working_dir):
-    if os.path.isdir(working_dir + x):
+for x in os.listdir(path):
+    if os.path.isdir(path + x):
         cmd = ['mkdir', '-p', '/buildTrace/' + x + '/graph'] 
         logs = subprocess.run(cmd, stdout=subprocess.PIPE)
         # write the graph data structure to file
         for node in graph:
             with open('/buildTrace/' + x + '/graph/graph_all.txt', 'a') as graph_file:
                     graph_file.write(node.get_id() + ' : ' + graph.vert_dict[node.get_id()] + '\n')
-
-os.chdir('../../')
