@@ -37,9 +37,9 @@ for i in fList:
     g.add_vertex(hash_cmd)
 
     # log the output of 'apt-get source' command to graph object
-    for root, dirs, files in os.walk('./temp/' + i): 
+    for root, dirs, files in os.walk('./'): 
       for filename in files:
-           checksum = hash_lib.sha256sum(filename)
+           checksum = hash_lib.sha256sum(os.path.join(root, filename))
            g.add_edge(hash_cmd, checksum, filename) # add edge connecting 'apt-get source' command to output file
 
     cmd = 'sudo apt-get build-dep -y ' + i
