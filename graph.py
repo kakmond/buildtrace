@@ -1,19 +1,8 @@
 class Graph:
 
-    _instance = None
-    @staticmethod 
-    def getInstance():
-        if Graph._instance is None:
-            Graph()
-        return Graph._instance
-      
     def __init__(self):
-        if Graph._instance != None:
-            raise Exception("This class is a singleton!")
-        else:
-            self.vert_dict = {}
-            self.num_vertices = 0
-            Graph._instance = self
+        self.vert_dict = {}
+        self.num_vertices = 0
 
     def __iter__(self):
         return iter(self.vert_dict.values())
