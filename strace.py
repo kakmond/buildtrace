@@ -13,8 +13,7 @@ import hash_lib
 pkgName = ''
 buildCmd = ''
 
-# call graph singleton instance
-graph = graph.Graph.getInstance()
+graph = graph.Graph() # initialize the graph object
 
 # 最初の処理で/buildTrace/pkgName内を全削除するため確認を取るための関数
 def yes_no_input():
@@ -38,6 +37,7 @@ def straceExe(buildCmd_, pkgName_):
     backup()
     except_change_file()
     hash_output()
+    graph_output() # write the graph data structure to file
 
     countTimeList = ['build and strace','edit log', 'file exist check', 'files backup', 'calc hash']
     exeTime_edit(countTimeList)
@@ -80,7 +80,9 @@ def makeDir():
     logs = subprocess.run(cmd, stdout=subprocess.PIPE)
     cmd = ['mkdir', '-p', '/buildTrace/' + pkgName + '/logs/times']
     logs = subprocess.run(cmd, stdout=subprocess.PIPE)
-    # print(logs.stdout.decode())
+    # create graph folder
+    cmd = ['mkdir', '-p', '/buildTrace/' + pkgName + '/graph'] 
+    logs = subprocess.run(cmd, stdout=subprocess.PIPE)
 
 @countTime
 def strace():
@@ -284,6 +286,12 @@ def hash_output():
         f.write('inputHash   : ' + inputHash + '\n')
         f.write('outputHash  : ' + outputHash + '\n')
         f.write('commandHash : ' + commandHash + '\n')
+
+def graph_output():
+    for node in graph:
+        for edge in node.get_connections():
+            with open('/buildTrace/' + pkgName + '/graph/graph_all.txt', 'a') as graph_file:
+                graph_file.write(node.get_id() + ' : ' + edge.get_id() + '\n')
 
 #ハッシュ計算
 # def sha256sum(filename):
