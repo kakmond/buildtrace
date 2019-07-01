@@ -51,6 +51,10 @@ os.chdir('../../')
 working_dir = './temp/' + pkgName + '/'
 for x in os.listdir(working_dir):
     if os.path.isdir(working_dir + x):
+        # delete old file first
+        cmd = 'rm -rf /buildTrace/' + x + '/graph/graph_all.txt'
+        logs = subprocess.run(cmd, stdout=subprocess.PIPE, shell=True)
+        # create new file
         cmd = ['mkdir', '-p', '/buildTrace/' + x + '/graph'] 
         logs = subprocess.run(cmd, stdout=subprocess.PIPE)
         # write the graph data structure to file
