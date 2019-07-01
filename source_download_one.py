@@ -28,7 +28,7 @@ for root, dirs, files in os.walk(path):
         checksum = hash_lib.sha256sum(filename)
         graph.add_edge(hash_cmd, checksum, filename) # add edge connecting 'apt-get source' command to output file
 
-cmd = 'sudo apt-get build-dep -y' + pkgName
+cmd = 'sudo apt-get build-dep -y ' + pkgName
 hash_cmd = hash_lib.sha256string(cmd)
 graph.add_vertex(hash_cmd)
 logs = subprocess.call(cmd, shell=True)
