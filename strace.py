@@ -30,6 +30,7 @@ def straceExe(buildCmd_, pkgName_):
     global pkgName, buildCmd, hashCmd
     pkgName = pkgName_
     buildCmd = buildCmd_
+    hashCmd = hash_lib.sha256string(buildCmd) # encryte build command to hash
     removeDir()
     makeDir()
     strace()
