@@ -12,6 +12,7 @@ import hash_lib
 # os.path.expanduser('~/')
 pkgName = ''
 buildCmd = ''
+hashCmd = ''
 
 graph = graph.Graph() # initialize the graph object
 
@@ -26,7 +27,7 @@ def yes_no_input():
 
 # main関数
 def straceExe(buildCmd_, pkgName_):
-    global pkgName, buildCmd
+    global pkgName, buildCmd, hashCmd
     pkgName = pkgName_
     buildCmd = buildCmd_
     removeDir()
@@ -62,8 +63,15 @@ def countTime(func):
 
 def removeDir():
     # /buildTrace/pkgName/ディレクトリ内を削除
-    cmd = 'rm -rf /buildTrace/' + pkgName + '/*'
+    # cmd = 'rm -rf /buildTrace/' + pkgName + '/*'
+
+    # delete backup directory
+    cmd = 'rm -rf /buildTrace/' + pkgName + '/backup'
     logs = subprocess.run(cmd, stdout=subprocess.PIPE, shell=True)
+    # delete log directory
+    cmd = 'rm -rf /buildTrace/' + pkgName + '/logs'
+    logs = subprocess.run(cmd, stdout=subprocess.PIPE, shell=True)
+
     # print(logs.stdout.decode())
 
 def makeDir():
@@ -87,13 +95,13 @@ def makeDir():
 @countTime
 def strace():
     # ビルドコマンド入力，加工
-    buildcmd = buildCmd
-    if buildcmd == '':
-        buildcmd = input("Please Enter build command : ")
-    cmd = 'strace -ff -e trace=openat,open -o /buildTrace/' + pkgName + '/logs/strace_out.txt ' + buildcmd
+    global buildCmd, hashCmd
+    if buildCmd == '':
+        buildCmd = input("Please Enter build command : ")
+        hashCmd = hash_lib.sha256string(buildCmd) # encryte build command to hash
+    cmd = 'strace -ff -e trace=openat,open -o /buildTrace/' + pkgName + '/logs/strace_out.txt ' + buildCmd
 
-    hash_cmd = hash_lib.sha256string(buildcmd)     # encryte build command to hash
-    graph.add_vertex(hash_cmd) # add hash to graph
+    graph.add_vertex(hashCmd) # add hash to graph
 
     # straceコマンドを使用 /buildTrace/にout.txt.????として出力(????はPID)
     logs = subprocess.run(cmd, stdout=subprocess.PIPE, shell=True)
@@ -101,7 +109,7 @@ def strace():
 
     # ビルドコマンドを/buildTrace/backup/commandにテキストとして保存
     file = open('/buildTrace/' + pkgName + '/backup/command/buildCommand.txt', 'wt')
-    file.write(buildcmd)
+    file.write(buildCmd)
     file.close()
 
 @countTime
@@ -235,7 +243,7 @@ def hash_output():
         checksum = hash_lib.sha256sum(i)
         logfile.write(checksum + ' : ' + i + '\n')
         file.write(checksum + '\n')
-        graph.add_edge(checksum, buildCmd, i) # add edge connecting input file to build command
+        graph.add_edge(checksum, hashCmd, i) # add edge connecting input file to build command
     logfile.close()
     file.close()
 
@@ -248,7 +256,7 @@ def hash_output():
         checksum = hash_lib.sha256sum(i)
         logfile.write(checksum + ' : ' + i + '\n')
         file.write(checksum + '\n')
-        graph.add_edge(buildCmd, checksum, i) # add edge connecting build command to output file
+        graph.add_edge(hashCmd, checksum, i) # add edge connecting build command to output file
     logfile.close()
     file.close()
 
