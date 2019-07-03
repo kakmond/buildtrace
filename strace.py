@@ -65,6 +65,7 @@ def countTime(func):
 def removeDir():
     # /buildTrace/pkgName/ディレクトリ内を削除
     cmd = 'rm -rf /buildTrace/' + pkgName + '/*'
+    logs = subprocess.run(cmd, stdout=subprocess.PIPE)
     # print(logs.stdout.decode())
 
 def makeDir():
