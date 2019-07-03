@@ -1,8 +1,22 @@
 class Graph:
 
+    _instance = None	
+    @staticmethod 	
+    def getInstance():	
+        if Graph._instance is None:	
+            Graph()	
+        return Graph._instance
+
     def __init__(self):
-        self.vert_dict = {}
-        self.num_vertices = 0
+        if Graph._instance != None:
+            raise Exception("This class is a singleton!")
+        else:
+            self.vert_dict = {}
+            self.num_vertices = 0
+            Graph._instance = self
+
+    def reset(self):
+        _instance = None
 
     def __iter__(self):
         return iter(self.vert_dict.values())
@@ -26,7 +40,6 @@ class Graph:
             self.add_vertex(to)
 
         self.vert_dict[frm].add_neighbor(self.vert_dict[to], weight)
-        # self.vert_dict[to].add_neighbor(self.vert_dict[frm], cost)
 
     def get_vertices(self):
         return self.vert_dict.keys()
