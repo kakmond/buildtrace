@@ -16,7 +16,7 @@ logs = subprocess.run(cmd, stdout=subprocess.PIPE)
 
 os.chdir(path)
 
-graph = graph.getInstance() # call graph singleton instance
+graph = graph.Graph.getInstance() # call graph singleton instance
 
 cmd = 'sudo apt-get source ' + pkgName
 graph.add_vertex(cmd)

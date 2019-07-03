@@ -14,7 +14,7 @@ pkgName = ''
 buildCmd = ''
 hashCmd = ''
 
-graph = graph.getInstance() # call graph singleton instance
+graph = graph.Graph.getInstance() # call graph singleton instance
 
 # 最初の処理で/buildTrace/pkgName内を全削除するため確認を取るための関数
 def yes_no_input():
@@ -236,7 +236,7 @@ def hash_output():
         checksum = hash_lib.sha256sum(i)
         logfile.write(checksum + ' : ' + i + '\n')
         file.write(checksum + '\n')
-        graph.add_edge(checksum, buildCmd, i) # add edge connecting input file to build command
+        graph.add_edge(checksum, buildCmd, '') # add edge connecting input file to build command
     logfile.close()
     file.close()
 

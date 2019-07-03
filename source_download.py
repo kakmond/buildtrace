@@ -33,7 +33,7 @@ for i in fList:
     cmd = 'sudo apt-get source ' + i
     logs = subprocess.call(cmd, shell=True)
 
-    g = graph.getInstance() # call graph singleton instance
+    g = graph.Graph.getInstance() # call graph singleton instance
     g.add_vertex(cmd)
 
     # log the output of 'apt-get source' command to graph object
