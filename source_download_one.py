@@ -4,6 +4,7 @@ import subprocess
 import os
 import hash_lib
 import graph
+import strace
 
 pkgName = input("Please enter package name to build a package from source: ")
 path = './temp/' + pkgName + '/'
@@ -15,22 +16,20 @@ logs = subprocess.run(cmd, stdout=subprocess.PIPE)
 
 os.chdir(path)
 
-graph = graph.Graph() # initialize the graph object
+graph = graph.getInstance() # call graph singleton instance
 
 cmd = 'sudo apt-get source ' + pkgName
-hash_cmd = hash_lib.sha256string(cmd)
-graph.add_vertex(hash_cmd)
+graph.add_vertex(cmd)
 logs = subprocess.call(cmd, shell=True)
 
 # log the output of 'apt-get source' command to graph object
 for root, dirs, files in os.walk('./'): 
    for filename in files:
         checksum = hash_lib.sha256sum(os.path.join(root, filename))
-        graph.add_edge(hash_cmd, checksum, filename) # add edge connecting 'apt-get source' command to output file
+        graph.add_edge(cmd, checksum, filename) # add edge connecting 'apt-get source' command to output file
 
 cmd = 'sudo apt-get build-dep -y ' + pkgName
-hash_cmd = hash_lib.sha256string(cmd)
-graph.add_vertex(hash_cmd)
+graph.add_vertex(cmd)
 logs = subprocess.call(cmd, shell=True)
 
 # log the output of 'apt-get build-dep' command to graph object
@@ -44,22 +43,17 @@ for dep in deps:
                isFile = os.path.isfile(path)
                if isFile:
                         checksum = hash_lib.sha256sum(path)
-                        graph.add_edge(hash_cmd, checksum, path) # add edge connecting 'apt-get build-dep' command to output file
-os.chdir('../../')
+                        graph.add_edge(cmd, checksum, path) # add edge connecting 'apt-get build-dep' command to output file
 
-# create /buildtrace/{packageName}/graph folder
-working_dir = './temp/' + pkgName + '/'
-for x in os.listdir(working_dir):
-    if os.path.isdir(working_dir + x):
-        # delete old file first
-        cmd = 'rm -rf /buildTrace/' + x + '/graph/graph_all.txt'
-        logs = subprocess.run(cmd, stdout=subprocess.PIPE, shell=True)
-        # create new file
-        cmd = ['mkdir', '-p', '/buildTrace/' + x + '/graph'] 
-        logs = subprocess.run(cmd, stdout=subprocess.PIPE)
-        # write the graph data structure to file
-        for node in graph:
-                for edge in node.get_connections():
-                    with open('/buildTrace/' + x + '/graph/graph_all.txt', 'a') as graph_file:
-                        graph_file.write(node.get_id() + ' : ' + edge.get_id() + '\n')
-        break
+count = 0
+for x in os.listdir('./'):
+    if os.path.isdir(x):
+        os.chdir(x)
+        strace.straceExe('dpkg-buildpackage -us -uc -b', x)
+        os.chdir('../')
+        count += 1
+
+if count == 0:
+    print(path + ' にはディレクトリないかも？')
+
+os.chdir('../../')
