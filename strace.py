@@ -4,7 +4,7 @@ import glob
 import os
 import re
 import time
-import graph
+import fileIO
 
 import hash_lib
 
@@ -14,7 +14,7 @@ pkgName = ''
 buildCmd = ''
 hashCmd = ''
 
-graph = graph.Graph.getInstance() # call graph singleton instance
+io = fileIO.FileIO.getInstance() # call FileIO singleton instance
 
 # 最初の処理で/buildTrace/pkgName内を全削除するため確認を取るための関数
 def yes_no_input():
@@ -39,7 +39,7 @@ def straceExe(buildCmd_, pkgName_):
     backup()
     except_change_file()
     hash_output()
-    graph_output() # write the graph data structure to file
+    json_output() # write the FileIO JSON data to file
 
     countTimeList = ['build and strace','edit log', 'file exist check', 'files backup', 'calc hash']
     exeTime_edit(countTimeList)
@@ -95,7 +95,7 @@ def strace():
         hashCmd = hash_lib.sha256string(buildCmd) # encryte build command to hash
     cmd = 'strace -ff -e trace=openat,open -o /buildTrace/' + pkgName + '/logs/strace_out.txt ' + buildCmd
 
-    graph.add_vertex(buildCmd) # add hash to graph
+    io.add_cmd(buildCmd) # add command to FileIO object
 
     # straceコマンドを使用 /buildTrace/にout.txt.????として出力(????はPID)
     logs = subprocess.run(cmd, stdout=subprocess.PIPE, shell=True)
@@ -237,7 +237,7 @@ def hash_output():
         checksum = hash_lib.sha256sum(i)
         logfile.write(checksum + ' : ' + i + '\n')
         file.write(checksum + '\n')
-        graph.add_edge(checksum, buildCmd, '') # add edge connecting input file to build command
+        io.add_input(buildCmd, i, checksum) # add the input file of build command to FileIO object
     logfile.close()
     file.close()
 
@@ -250,7 +250,7 @@ def hash_output():
         checksum = hash_lib.sha256sum(i)
         logfile.write(checksum + ' : ' + i + '\n')
         file.write(checksum + '\n')
-        graph.add_edge(buildCmd, checksum, i) # add edge connecting build command to output file
+        io.add_output(buildCmd, i, checksum) # add the output file of build command to FileIO object
     logfile.close()
     file.close()
 
@@ -289,11 +289,9 @@ def hash_output():
         f.write('outputHash  : ' + outputHash + '\n')
         f.write('commandHash : ' + commandHash + '\n')
 
-def graph_output():
-    for node in graph:
-        for edge in node.get_connections():
+def json_output():
             with open('/buildTrace/' + pkgName + '/graph/graph_all.txt', 'a') as graph_file:
-                graph_file.write(node.get_id() + ' : ' + edge.get_id() + '\n')
+                graph_file.write(io.toJSON())
 
 #ハッシュ計算
 # def sha256sum(filename):

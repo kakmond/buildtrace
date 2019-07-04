@@ -3,7 +3,7 @@
 import subprocess
 import os
 import hash_lib
-import graph
+import fileIO
 import strace
 
 # このファイルとファイルリストが同じ階層に置かれていることが前提
@@ -33,20 +33,20 @@ for i in fList:
     cmd = 'sudo apt-get source ' + i
     logs = subprocess.call(cmd, shell=True)
 
-    g = graph.Graph.getInstance() # call graph singleton instance
-    g.add_vertex(cmd)
+    io = fileIO.FileIO.getInstance() # call FileIO singleton instance
+    io.add_cmd(cmd) # add command to FileIO object
 
-    # log the output of 'apt-get source' command to graph object
+    # log the output of 'apt-get source' command to FileIO object
     for root, dirs, files in os.walk('./'): 
       for filename in files:
-           checksum = hash_lib.sha256sum(os.path.join(root, filename))
-           g.add_edge(cmd, checksum, filename) # add edge connecting 'apt-get source' command to output file
+            checksum = hash_lib.sha256sum(os.path.join(root, filename))
+            io.add_output(cmd, filename, checksum) # add the output file of 'apt-get source' command to FileIO object
 
     cmd = 'sudo apt-get build-dep -y ' + i
-    g.add_vertex(cmd)
+    io.add_cmd(cmd) # add command to FileIO object
     logs = subprocess.call(cmd, shell=True)
 
-    # log the output of 'apt-get build-dep' command to graph object
+    # log the output of 'apt-get build-dep' command to FileIO object
     logs = subprocess.check_output('apt-cache showsrc ' + i + ' | grep -oP "(?<=Build-Depends:).*"', universal_newlines=True, shell=True) # list packages needed to build from source
     deps = logs.split(',')
     for dep in deps:
@@ -57,7 +57,7 @@ for i in fList:
                    isFile = os.path.isfile(path)
                    if isFile:
                             checksum = hash_lib.sha256sum(path)
-                            g.add_edge(cmd, checksum, path) # add edge connecting 'apt-get build-dep' command to output file
+                            io.add_output(cmd, path, checksum) # add the output file of 'apt-get build-dep' command to FileIO object
 
     count = 0
     for x in os.listdir('./'):
@@ -72,5 +72,5 @@ for i in fList:
         print(path + ' にはディレクトリないかも？')
         print('wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww')
 
-    g.reset() # reset data in graph
+    io.reset() # reset data in FileIO
     os.chdir('../../')

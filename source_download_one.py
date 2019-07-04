@@ -3,7 +3,7 @@
 import subprocess
 import os
 import hash_lib
-import graph
+import fileIO
 import strace
 
 pkgName = input("Please enter package name to build a package from source: ")
@@ -16,23 +16,23 @@ logs = subprocess.run(cmd, stdout=subprocess.PIPE)
 
 os.chdir(path)
 
-graph = graph.Graph.getInstance() # call graph singleton instance
+io = fileIO.FileIO.getInstance() # call FileIO singleton instance
 
 cmd = 'sudo apt-get source ' + pkgName
-graph.add_vertex(cmd)
+io.add_cmd(cmd) # add command to FileIO object
 logs = subprocess.call(cmd, shell=True)
 
-# log the output of 'apt-get source' command to graph object
+# log the output of 'apt-get source' command to FileIO object
 for root, dirs, files in os.walk('./'): 
    for filename in files:
         checksum = hash_lib.sha256sum(os.path.join(root, filename))
-        graph.add_edge(cmd, checksum, filename) # add edge connecting 'apt-get source' command to output file
+        io.add_output(cmd, filename, checksum) # add the output file of 'apt-get source' command to FileIO object
 
 cmd = 'sudo apt-get build-dep -y ' + pkgName
-graph.add_vertex(cmd)
+io.add_cmd(cmd) # add command to FileIO object
 logs = subprocess.call(cmd, shell=True)
 
-# log the output of 'apt-get build-dep' command to graph object
+# log the output of 'apt-get build-dep' command to FileIO object
 logs = subprocess.check_output('apt-cache showsrc ' + pkgName + ' | grep -oP "(?<=Build-Depends:).*"', universal_newlines=True, shell=True) # list packages needed to build from source
 deps = logs.split(',')
 for dep in deps:
@@ -43,7 +43,7 @@ for dep in deps:
                isFile = os.path.isfile(path)
                if isFile:
                         checksum = hash_lib.sha256sum(path)
-                        graph.add_edge(cmd, checksum, path) # add edge connecting 'apt-get build-dep' command to output file
+                        io.add_output(cmd, filename, checksum) # add the output file of 'apt-get build-dep' command to FileIO object
 
 count = 0
 for x in os.listdir('./'):
