@@ -5,7 +5,7 @@ import os
 import re
 import time
 import fileIO
-
+import bz2
 import hash_lib
 
 # subprocess内でルートを指定したいときの書き方
@@ -290,8 +290,11 @@ def hash_output():
         f.write('commandHash : ' + commandHash + '\n')
 
 def json_output():
-            with open('/buildTrace/' + pkgName + '/graph/graph_all.txt', 'a') as graph_file:
-                graph_file.write(io.toJSON())
+    original_data = io.toJSON()
+    with open('/buildTrace/' + pkgName + '/graph/graph_all.txt', 'wt') as json_file:
+                json_file.write(original_data)
+    with open('/buildTrace/' + pkgName + '/graph/graph_all.txt.bz2', 'wb') as binary_file:
+                binary_file.write(bz2.compress(original_data))
 
 #ハッシュ計算
 # def sha256sum(filename):
