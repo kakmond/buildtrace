@@ -10,7 +10,7 @@ class FileIO:
         return FileIO._instance
 
     def toJSON(self):
-        return json.dumps(self, default=lambda o: o.__dict__, sort_keys=True, indent=2)
+        return json.dumps(self, default=lambda o: o.__dict__, sort_keys=True, indent=0)
 
     def __init__(self):
         if FileIO._instance != None:
