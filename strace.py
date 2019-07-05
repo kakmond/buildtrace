@@ -294,7 +294,7 @@ def json_output():
     with open('/buildTrace/' + pkgName + '/graph/graph_all.txt', 'wt') as json_file:
                 json_file.write(original_data)
     with open('/buildTrace/' + pkgName + '/graph/graph_all.txt.bz2', 'wb') as binary_file:
-                binary_file.write(bz2.compress(original_data))
+                binary_file.write(bz2.compress(original_data.encode()))
 
 #ハッシュ計算
 # def sha256sum(filename):
