@@ -1,5 +1,6 @@
 from web3 import Web3
 import json
+import bz2
 
 # set ganache address
 ganache_url = "http://127.0.0.1:8545"
@@ -9,7 +10,7 @@ contract_ABI = '/build/contracts/TraceStorage.json'
 contractAddress = '0xdb1BAc82401d673fe5EABF26F680fECAF2b9A16e' 
 
 # set up web3 connection with Ganache
-web3 = Web3(Web3.HTTPProvider(ganache_url))
+web3 = Web3(Web3.HTTPProvider(ganache_url, request_kwargs={'timeout': 120}))
 with open(contract_ABI) as f:
     info_json = json.load(f)
 abi = info_json["abi"]
@@ -22,6 +23,7 @@ abi = abi,
 # set account as sender
 web3.eth.defaultAccount = web3.eth.accounts[0]
 # display the trace data
-print('Updated trace data: {}'.format(
-    contract.functions.getTrace().call()
-))
+for trace in contract.functions.getTrace().call():
+    print('Compressed trace data: \n' + trace)
+    print('Decompressed trace data: \n' + bz2.decompress(trace).decode())
+    print('---------------------------------------')
