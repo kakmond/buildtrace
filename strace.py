@@ -308,8 +308,8 @@ def json_output():
                 binary_file.write(binary)
                 store_data(binary)
 
-# set up web3 connection with Ganache
-def set_up_web3():
+# set up web3 connection with Ganache and store data on Blockchain
+def store_data(data):
     web3 = Web3(Web3.HTTPProvider(ganache_url))
     back_to_origin = '../../../' # back to original working directory 
     with open(back_to_origin + contract_ABI) as f:
@@ -323,9 +323,6 @@ def set_up_web3():
     )
     # set account as sender
     web3.eth.defaultAccount = web3.eth.accounts[0]
-
-# store data on Blockchain
-def store_data(data):
     # call addTrace function in smart contract
     tx_hash = contract.functions.addTrace(data).transact()
     # wait for transaction to be mined...
