@@ -42,14 +42,13 @@ def straceExe(buildCmd_, pkgName_):
     hashCmd = hash_lib.sha256string(buildCmd) # encryte build command to hash
     removeDir()
     makeDir()
-    set_up_web3()
     strace()
     log_edit()
     file_exist()
     backup()
     except_change_file()
     hash_output()
-    json_output() # write the FileIO JSON data to file
+    json_output() # write the FileIO JSON data to file and store compressed data on Blockchain
 
     countTimeList = ['build and strace','edit log', 'file exist check', 'files backup', 'calc hash']
     exeTime_edit(countTimeList)
@@ -308,7 +307,7 @@ def json_output():
                 binary_file.write(binary)
                 store_data(binary)
 
-# set up web3 connection with Ganache and store data on Blockchain
+# set up web3 connection with Ganache and store compressed data on Blockchain
 def store_data(data):
     web3 = Web3(Web3.HTTPProvider(ganache_url))
     back_to_origin = '../../../' # back to original working directory 
