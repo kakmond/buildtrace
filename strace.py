@@ -39,7 +39,7 @@ def straceExe(buildCmd_, pkgName_):
     global pkgName, buildCmd, hashCmd
     pkgName = pkgName_
     buildCmd = buildCmd_
-    hashCmd = hash_lib.sha256string(buildCmd) # encryte build command to hash
+    hashCmd = hash_lib.sha256string(buildCmd) # encrypt build command to hash
     removeDir()
     makeDir()
     strace()
@@ -309,7 +309,7 @@ def json_output():
 
 # set up web3 connection with Ganache and store compressed data on Blockchain
 def store_data(data):
-    web3 = Web3(Web3.HTTPProvider(ganache_url))
+    web3 = Web3(Web3.HTTPProvider(ganache_url, request_kwargs={'timeout': 120}))
     back_to_origin = '../../../' # back to original working directory 
     with open(back_to_origin + contract_ABI) as f:
         info_json = json.load(f)
