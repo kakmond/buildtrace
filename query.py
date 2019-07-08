@@ -5,7 +5,7 @@ import bz2
 # set ganache address
 ganache_url = "http://127.0.0.1:8545"
 # set path of json file (ABI)
-contract_ABI = '/build/contracts/TraceStorage.json'
+contract_ABI = './build/contracts/TraceStorage.json'
 # set deployed address of the contract
 contractAddress = '0xdb1BAc82401d673fe5EABF26F680fECAF2b9A16e' 
 
@@ -24,6 +24,6 @@ abi = abi,
 web3.eth.defaultAccount = web3.eth.accounts[0]
 # display the trace data
 for trace in contract.functions.getTrace().call():
-    print('Compressed trace data: \n' + trace)
-    print('Decompressed trace data: \n' + bz2.decompress(trace).decode())
+    print('Compressed trace data:\n', trace)
+    print('Decompressed trace data:\n', bz2.decompress(trace).decode())
     print('---------------------------------------')
