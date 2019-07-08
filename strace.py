@@ -13,7 +13,7 @@ import json
 # set ganache address
 ganache_url = "http://127.0.0.1:8545"
 # set path of json file (ABI)
-contract_ABI = './build/contracts/TraceStorage.json'
+contract_ABI = '/build/contracts/TraceStorage.json'
 # set deployed address of the contract
 contractAddress = '0xdb1BAc82401d673fe5EABF26F680fECAF2b9A16e' 
 
@@ -311,7 +311,8 @@ def json_output():
 # set up web3 connection with Ganache
 def set_up_web3():
     web3 = Web3(Web3.HTTPProvider(ganache_url))
-    with open(contract_ABI) as f:
+    back_to_origin = '../../../' # back to original working directory 
+    with open(back_to_origin + contract_ABI) as f:
         info_json = json.load(f)
     abi = info_json["abi"]
     bytecode = info_json['bytecode']
