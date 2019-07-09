@@ -25,8 +25,9 @@ logs = subprocess.call(cmd, shell=True)
 # log the output of 'apt-get source' command to FileIO object
 for root, dirs, files in os.walk('./'): 
    for filename in files:
-        checksum = hash_lib.sha256sum(os.path.join(root, filename))
-        io.add_output(cmd, os.path.join(root, filename), checksum) # add the output file of 'apt-get source' command to FileIO object
+        absPath = os.path.join(os.path.abspath(root), filename)
+        checksum = hash_lib.sha256sum(absPath)
+        io.add_output(cmd, os.path.join(absPath, filename), checksum) # add the output file of 'apt-get source' command to FileIO object
 
 cmd = 'sudo apt-get build-dep -y ' + pkgName
 io.add_cmd(cmd) # add command to FileIO object
