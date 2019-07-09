@@ -40,7 +40,7 @@ for i in fList:
     for root, dirs, files in os.walk('./'): 
       for filename in files:
             checksum = hash_lib.sha256sum(os.path.join(root, filename))
-            io.add_output(cmd, filename, checksum) # add the output file of 'apt-get source' command to FileIO object
+            io.add_output(cmd, os.path.join(root, filename), checksum) # add the output file of 'apt-get source' command to FileIO object
 
     cmd = 'sudo apt-get build-dep -y ' + i
     io.add_cmd(cmd) # add command to FileIO object
