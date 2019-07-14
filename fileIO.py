@@ -1,4 +1,5 @@
 import json
+import time
 
 class FileIO:
 
@@ -17,7 +18,16 @@ class FileIO:
             raise Exception("This class is a singleton!")
         else:
             self.result = []
+            self.set_timestamp()
             FileIO._instance = self
+
+    def set_timestamp(self):
+        now = time.time() # current date and time
+        timestamp = str(now).split('.')[0] # timestamp without the milliseconds
+        self.timestamp = timestamp
+
+    def set_account(self, address):
+        self.account = address
 
     def reset(self):
         _instance = None
@@ -84,10 +94,11 @@ class File:
     def get_hash(self):
         return self.hash
 
+# for testing purpose only
 if __name__ == '__main__':
 
     io = FileIO.getInstance()
-
+    io.set_account('mond')
     io.add_cmd('cmd1')
 
     io.add_input('cmd1', 'file1', 'hash1')
