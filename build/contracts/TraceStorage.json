@@ -700,10 +700,16 @@
       "links": {},
       "address": "0x71b8BF2f2F80c02f2c40077D8Cf663052270ED55",
       "transactionHash": "0xffa03b6814e5e2273a5200873a9197d8104f50987bd76303592e41adc14bca71"
+    },
+    "1563096587778": {
+      "events": {},
+      "links": {},
+      "address": "0xD88FAa5416e27C986b9b1c895Eb801e070ef013d",
+      "transactionHash": "0x819026c09e178f94d1dd072bcf0026f3d039ddfd7c27c804448000c6d930faad"
     }
   },
   "schemaVersion": "3.0.10",
-  "updatedAt": "2019-07-10T14:06:24.967Z",
+  "updatedAt": "2019-07-14T09:30:34.696Z",
   "devdoc": {
     "methods": {}
   },
