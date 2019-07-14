@@ -21,6 +21,9 @@ class FileIO:
             self.set_timestamp()
             FileIO._instance = self
 
+    def set_packageName(self, packageName):
+        self.package = packageName
+
     def set_timestamp(self):
         now = time.time() # current date and time
         timestamp = str(now).split('.')[0] # timestamp without the milliseconds
@@ -99,6 +102,7 @@ if __name__ == '__main__':
 
     io = FileIO.getInstance()
     io.set_account('mond')
+    io.set_packageName("test")
     io.add_cmd('cmd1')
 
     io.add_input('cmd1', 'file1', 'hash1')
