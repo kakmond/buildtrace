@@ -321,8 +321,9 @@ def store_data(data):
     abi = abi,
     )
     # set account as sender
-    web3.eth.defaultAccount = web3.eth.accounts[0]
-    io.set_account(web3.eth.defaultAccount)
+    account = web3.eth.accounts[0]
+    web3.eth.defaultAccount = account
+    io.set_account(account)
     # call addTrace function in smart contract
     tx_hash = contract.functions.addTrace(data).transact()
     # wait for transaction to be mined...
