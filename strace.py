@@ -39,6 +39,7 @@ def straceExe(buildCmd_, pkgName_):
     global pkgName, buildCmd, hashCmd
     pkgName = pkgName_
     io.set_packageName(pkgName) # set the name of package
+    io.set_account('0xbb06Ee53c81FD74c70C372f4Cf6DE317135EDB64') # set account
     buildCmd = buildCmd_
     hashCmd = hash_lib.sha256string(buildCmd) # encrypt build command to hash
     removeDir()
@@ -323,7 +324,6 @@ def store_data(data):
     )
     # set account as sender
     web3.eth.defaultAccount = web3.eth.accounts[0] # for test only
-    io.set_account('0xbb06Ee53c81FD74c70C372f4Cf6DE317135EDB64')
     # call addTrace function in smart contract
     tx_hash = contract.functions.addTrace(data).transact()
     # wait for transaction to be mined...
