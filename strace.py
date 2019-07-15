@@ -11,7 +11,7 @@ from web3 import Web3
 import json
 
 # set ganache address
-ganache_url = "http://127.0.0.1:8545"
+ganache_url = "http://10.0.2.2:8545"
 # set path of json file (ABI)
 contract_ABI = './build/contracts/TraceStorage.json'
 # set deployed address of the contract
@@ -38,6 +38,7 @@ def yes_no_input():
 def straceExe(buildCmd_, pkgName_):
     global pkgName, buildCmd, hashCmd
     pkgName = pkgName_
+    io.set_packageName(pkgName) # set the name of package
     buildCmd = buildCmd_
     hashCmd = hash_lib.sha256string(buildCmd) # encrypt build command to hash
     removeDir()
@@ -321,9 +322,8 @@ def store_data(data):
     abi = abi,
     )
     # set account as sender
-    account = web3.eth.accounts[0]
-    web3.eth.defaultAccount = account
-    io.set_account(account)
+    web3.eth.defaultAccount = web3.eth.accounts[0] # for test only
+    io.set_account('0xbb06Ee53c81FD74c70C372f4Cf6DE317135EDB64')
     # call addTrace function in smart contract
     tx_hash = contract.functions.addTrace(data).transact()
     # wait for transaction to be mined...
