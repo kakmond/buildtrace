@@ -17,7 +17,6 @@ logs = subprocess.run(cmd, stdout=subprocess.PIPE)
 os.chdir(path)
 
 io = fileIO.FileIO.getInstance() # call FileIO singleton instance
-io.set_packageName(pkgName) # set the name of package
 
 cmd = 'sudo apt-get source ' + pkgName
 io.add_cmd(cmd) # add command to FileIO object

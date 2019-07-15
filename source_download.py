@@ -34,7 +34,6 @@ for i in fList:
     logs = subprocess.call(cmd, shell=True)
 
     io = fileIO.FileIO.getInstance() # call FileIO singleton instance
-    io.set_packageName(i) # set the name of package
     io.add_cmd(cmd) # add command to FileIO object
 
     # log the output of 'apt-get source' command to FileIO object
