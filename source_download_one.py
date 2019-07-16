@@ -38,14 +38,17 @@ logs = subprocess.check_output('apt-cache showsrc ' + pkgName + ' | grep -oP "(?
 deps = logs.split(',')
 for dep in deps:
        dep_name = dep.split('(')[0] # ignore version of the dependency
-       logs = subprocess.check_output('dpkg -L ' + dep_name, universal_newlines=True, shell=True) # list the files installed
-       paths = logs.split('\n')
-       for path in paths:     
-               isFile = os.path.isfile(path)
-               if isFile:
-                        checksum = hash_lib.sha256sum(path)
-                        io.add_output(cmd, path, checksum) # add the output file of 'apt-get build-dep' command to FileIO object
-
+       dep_name = dep_name.split('<')[0] # ignore status of the dependency
+       try:
+                logs = subprocess.check_output('dpkg -L ' + dep_name, universal_newlines=True, shell=True) # list the files installed
+                paths = logs.split('\n')
+                for path in paths:
+                        isFile = os.path.isfile(path)
+                        if isFile:
+                                checksum = hash_lib.sha256sum(path)
+                                io.add_output(cmd, path, checksum) # add the output file of 'apt-get build-dep' command to FileIO object
+       except subprocess.CalledProcessError as e: # if dependency is not installed
+                pass # do nothing
 count = 0
 for x in os.listdir('./'):
     if os.path.isdir(x):
